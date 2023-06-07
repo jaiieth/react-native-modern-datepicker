@@ -25,13 +25,14 @@ const SelectMonth = () => {
     minimumDate,
     maximumDate,
     onMonthYearChange,
+    locale
   } = useCalendar();
   const [mainState, setMainState] = state;
   const [show, setShow] = useState(false);
   const style = styles(options);
   const [year, setYear] = useState(utils.getMonthYearText(mainState.activeDate).split(' ')[1]);
   const openAnimation = useRef(new Animated.Value(0)).current;
-  const currentMonth = Number(mainState.activeDate.split('/')[1]);
+  const currentMonth = +utils.getFormatedDate(mainState.activeDate,"MM")
   const prevDisable = maximumDate && utils.checkYearDisabled(Number(utils.toEnglish(year)), true);
   const nextDisable = minimumDate && utils.checkYearDisabled(Number(utils.toEnglish(year)), false);
 
@@ -82,13 +83,27 @@ const SelectMonth = () => {
   };
 
   const onSelectYear = number => {
-    let y = Number(utils.toEnglish(year)) + number;
+    let y = Number(utils.toEnglish(year)) + number
+    const month = +utils.getFormatedDate(mainState.activeDate,"MM")-1
     if (y > selectorEndingYear) {
       y = selectorEndingYear;
     } else if (y < selectorStartingYear) {
       y = selectorStartingYear;
     }
     setYear(utils.toPersianNumber(y));
+    const date = utils.getDate(utils.validYear(mainState.activeDate, y));
+    const activeDate =
+      month !== null ? (isGregorian ? date.month(month) : date.jMonth(month)) : date;
+    setMainState({
+      type: 'set',
+      activeDate: utils.getFormated(activeDate),
+    });
+    month !== null && onMonthYearChange(utils.getFormated(activeDate, 'monthYearFormat'));
+    month !== null &&
+      mode !== 'monthYear' &&
+      setMainState({
+        type: 'toggleMonth',
+      });
   };
 
   const containerStyle = [
@@ -157,7 +172,7 @@ const SelectMonth = () => {
                   currentMonth === item + 1 && style.selectedItemText,
                   disabled && style.disabledItemText,
                 ]}>
-                {utils.getMonthName(item)}
+                {locale ? utils.getMonthName(item,locale) :utils.getMonthName(item)}
               </Text>
             </TouchableOpacity>
           );

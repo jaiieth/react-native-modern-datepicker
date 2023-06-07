@@ -46,6 +46,20 @@ const gregorianConfigs = {
     'November',
     'December',
   ],
+  monthNamesTH: [
+    'มกราคม',
+    'กุมภาพันธ์',
+    'มีนาคม',
+    'เมษายน',
+    'พฤษภาคม',
+    'มิถุนายน',
+    'กรกฏาคม',
+    'สิงหาคม',
+    'กันยายน',
+    'ตุลาคม',
+    'พฤศจิกายน',
+    'ธันวาคม',
+  ],
   selectedFormat: 'YYYY/MM/DD',
   dateFormat: 'YYYY/MM/DD',
   monthYearFormat: 'YYYY MM',
@@ -83,7 +97,7 @@ class utils {
 
   getToday = () => this.getFormated(m, 'dateFormat');
 
-  getMonthName = (month) => this.config.monthNames[month];
+  getMonthName = (month, locale="en") => locale==="en" ? this.config.monthNames[month] : this.config.monthNamesTH[month]
 
   toPersianNumber = (value) => {
     const {isGregorian} = this.data;
